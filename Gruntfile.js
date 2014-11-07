@@ -41,7 +41,7 @@ module.exports = function(grunt) {
         tasks: ['newer:copy:styles', 'autoprefixer']
       },
       browserify: {
-        files: ['<%= yeoman.app %>/scripts/**/*.js', 'test/{,*/}*.js'],
+        files: ['<%= yeoman.app %>/scripts/**/*.{js,coffee}', 'test/{,*/}*.js'],
         tasks: ['browserify:dev', 'concat:dev']
       },
       mocha: {
@@ -55,7 +55,7 @@ module.exports = function(grunt) {
         files: [
           '<%= yeoman.app %>/**/*.html',
           '.tmp/styles/{,*/}*.css',
-          '{.tmp,<%= yeoman.app %>}/scripts/{,*/}*.js',
+          '{.tmp,<%= yeoman.app %>}/scripts/{,*/}*.{js,coffee}',
           '<%= yeoman.app %>/images/{,*/}*.{gif,jpeg,jpg,png,svg,webp}'
         ]
       }
@@ -160,10 +160,12 @@ module.exports = function(grunt) {
         dest: '.tmp/scripts/vendor.js',
         options: {
           debug: true,
+          transform: ['debowerify'],
           require: ['jquery', 'lodash', 'backbone'],
 
           alias: [
-            'lodash:underscore'
+            'lodash:underscore',
+            'app/bower_components/threejs-build/build/three:three'
           ]
         }
       },
@@ -172,7 +174,12 @@ module.exports = function(grunt) {
         dest: '.tmp/scripts/main.js',
         options: {
           debug: true,
-          external: ['jquery', 'lodash', 'backbone']
+          transform: ['coffeeify', 'debowerify'],
+          external: ['jquery', 'lodash', 'backbone'],
+          alias: ['app/bower_components/threejs-build/build/three:three'],
+          browserifyOptions: {
+            debug: true
+          }
         }
       },
       test: {
@@ -180,7 +187,9 @@ module.exports = function(grunt) {
         dest: '.tmp/test/test.js',
         options: {
           debug: true,
-          external: ['jquery', 'lodash', 'backbone']
+          transform: ['debowerify'],
+          external: ['jquery', 'lodash', 'backbone'],
+          alias: ['app/bower_components/threejs-build/build/three:three']
           // ignore: ['test/lib/*.js', 'test/spec/*.js']
         }
       }

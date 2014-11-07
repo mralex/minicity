@@ -7,7 +7,7 @@
 
 'use strict';
 
-var App = require('./app.js');
+var App = require('./app.coffee');
 
 var app = new App();
 
