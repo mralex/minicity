@@ -4,6 +4,7 @@
   "dependencies": {
     "bootstrap": ">=3.1.1",
     "modernizr": "~2.8.2",
-    "threejs-build": "*"
+    "threejs-build": "*",
+    "noisejs": "*"
   }
 }

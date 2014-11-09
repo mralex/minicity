@@ -12,3 +12,4 @@ var App = require('./app.coffee');
 var app = new App();
 
 app.beep();
+app.start();

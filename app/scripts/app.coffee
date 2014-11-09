@@ -1,11 +1,19 @@
 'use strict'
 
-THREE = require 'three'
+webGLClient = require './client/webgl.coffee'
+canvasClient = require './client/canvas.coffee'
 
-App = ->
-  console.log 'app initialized'
+class App
+    constructor: ->
+        @client = new canvasClient()
+        document.body.appendChild @client.canvas
 
-App.prototype.beep = ->
-  console.log 'coffee hi!'
+        return @
+
+    start: ->
+        @client.render()
+
+    beep: ->
+        console.log 'coffee hi!'
 
 module.exports = App
