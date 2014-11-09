@@ -6,7 +6,7 @@ canvasClient = require './client/canvas.coffee'
 class App
     constructor: ->
         @client = new canvasClient()
-        document.body.appendChild @client.canvas
+        document.getElementById('canvas').appendChild @client.canvas
 
         return @
 
