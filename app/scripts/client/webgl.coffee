@@ -62,11 +62,13 @@ class Client
         @map.generate()
 
         mWater = new THREE.MeshLambertMaterial({ color: 0x0000ff })
+        mTideWater = new THREE.MeshLambertMaterial({ color: 0x1111aa })
         mSand = new THREE.MeshLambertMaterial({ color: 0xffff00 })
         mGrass = new THREE.MeshLambertMaterial({ color: 0x00ff00 })
         mHills = new THREE.MeshLambertMaterial({ color: 0x008800 })
         materials = new THREE.MeshFaceMaterial([
             mWater
+            mTideWater
             mSand
             mGrass
             mHills
@@ -86,15 +88,17 @@ class Client
 
                 if value < 0
                     materialIndex = 0
-                # Sand
-                else if value > 0 and value < 0.0133
+                else if value > 0 and value < 0.008
                     materialIndex = 1
-                # Grass
-                else if value > 0.0133 and value < 0.2
+                # Sand
+                else if value > 0.008 and value < 0.0159
                     materialIndex = 2
+                # Grass
+                else if value > 0.0159 and value < 0.2
+                    materialIndex = 3
                 # Tundra
                 else
-                    materialIndex = 3
+                    materialIndex = 4
 
                 face.materialIndex = face2.materialIndex = materialIndex
 
