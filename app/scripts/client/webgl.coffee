@@ -31,7 +31,7 @@ class Client
 
         console.log 'adding lights'
         @light = new THREE.PointLight(0xffffff, 1.1, 0)
-        @light.position.set(0.0, 0, 100)
+        @light.position.set(0.0, 0, 200)
         @scene.add @light
 
         @camera.rotation.set(0, 0, 0)
@@ -61,11 +61,11 @@ class Client
         @map = new Map width, height
         @map.generate()
 
-        mWater = new THREE.MeshLambertMaterial({ color: 0x0000ff })
+        mWater = new THREE.MeshLambertMaterial({ color: 0x003fff })
         mTideWater = new THREE.MeshLambertMaterial({ color: 0x1111aa })
-        mSand = new THREE.MeshLambertMaterial({ color: 0xffff00 })
-        mGrass = new THREE.MeshLambertMaterial({ color: 0x00ff00 })
-        mHills = new THREE.MeshLambertMaterial({ color: 0x008800 })
+        mSand = new THREE.MeshLambertMaterial({ color: 0xf2e077 })
+        mGrass = new THREE.MeshLambertMaterial({ color: 0x4dbd33 })
+        mHills = new THREE.MeshLambertMaterial({ color: 0x228b22 })
         materials = new THREE.MeshFaceMaterial([
             mWater
             mTideWater
@@ -91,10 +91,10 @@ class Client
                 else if value > 0 and value < 0.008
                     materialIndex = 1
                 # Sand
-                else if value > 0.008 and value < 0.0159
+                else if value > 0.008 and value < 0.0161
                     materialIndex = 2
                 # Grass
-                else if value > 0.0159 and value < 0.2
+                else if value > 0.0161 and value < 0.2
                     materialIndex = 3
                 # Tundra
                 else
