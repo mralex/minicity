@@ -5,15 +5,13 @@ canvasClient = require './client/canvas.coffee'
 
 class App
     constructor: ->
-        @client = new canvasClient()
+        @client = window.client = new webGLClient()
         document.getElementById('canvas').appendChild @client.canvas
 
         return @
 
     start: ->
+        console.log 'rendering'
         @client.render()
-
-    beep: ->
-        console.log 'coffee hi!'
 
 module.exports = App

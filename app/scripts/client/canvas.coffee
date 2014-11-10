@@ -6,8 +6,8 @@ Map = require '../game/map.coffee'
 
 class Client
     constructor: ->
-        @width = 1280
-        @height = 720
+        @width = 256
+        @height = 256
         @perlin = new Perlin()
         @map = new Map(@width, @height)
         @canvas = document.createElement 'canvas'

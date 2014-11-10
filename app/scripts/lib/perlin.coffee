@@ -7,7 +7,9 @@ Noise = require 'noisejs'
 
 class Perlin
     constructor: ->
-        @noise = new Noise Math.random()
+        @seed = Math.random()
+        console.log 'Map seed: ' + @seed
+        @noise = new Noise @seed
 
     perlin2: (x, y, octaves=1, persistence=0.5, lacunarity=2) ->
         freq = 1.0
