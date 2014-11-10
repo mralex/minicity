@@ -31,7 +31,7 @@ class Client
 
         console.log 'adding lights'
         @light = new THREE.PointLight(0xffffff, 1.1, 0)
-        @light.position.set(0.0, 0, 50)
+        @light.position.set(0.0, 0, 100)
         @scene.add @light
 
         @camera.rotation.set(0, 0, 0)
@@ -39,7 +39,7 @@ class Client
         @initializeStats()
 
         @controls = new OrbitControls @camera, @renderer.domElement
-        @controls.noZoom = true
+        # @controls.noZoom = true
 
     initializeStats: ->
         @stats = new Stats()
@@ -52,45 +52,67 @@ class Client
         document.body.appendChild(@stats.domElement);
 
     initializeMap: ->
-        width = 128
-        height = 128
+        width = 256
+        height = 256
         tileSize = 1
         
         @mapObject = new THREE.Object3D
 
         @map = new Map width, height
         @map.generate()
-        geometry = new THREE.BoxGeometry tileSize, tileSize, tileSize
-        mGeometry = new THREE.Geometry
+
+        mWater = new THREE.MeshLambertMaterial({ color: 0x0000ff })
+        mSand = new THREE.MeshLambertMaterial({ color: 0xffff00 })
+        mGrass = new THREE.MeshLambertMaterial({ color: 0x00ff00 })
+        mHills = new THREE.MeshLambertMaterial({ color: 0x008800 })
+        materials = new THREE.MeshFaceMaterial([
+            mWater
+            mSand
+            mGrass
+            mHills
+        ])
+
+        geometry = new THREE.PlaneGeometry(width, height, width, height)
 
         for y in [0...height]
             for x in [0...width]
                 value = @map.tileAt x, y
+                # faceIndex = (y * width * 2) + x * 2
+                faceIndex = (x * height * 2) + y * 2
+                face = geometry.faces[faceIndex]
+                face2 = geometry.faces[faceIndex + 1]
+
+                vertexIndex = (y * width) + x
 
                 if value < 0
-                    color = 0x0000ff
+                    materialIndex = 0
                 # Sand
                 else if value > 0 and value < 0.0133
-                    color = 0xffff00
+                    materialIndex = 1
                 # Grass
                 else if value > 0.0133 and value < 0.2
-                    color = 0x00ff00
+                    materialIndex = 2
                 # Tundra
                 else
-                    color = 0x008800
+                    materialIndex = 3
 
-                material = new THREE.MeshLambertMaterial { 
-                    color: color
-                    # emissive: 0xdddddd
-                }
-                mesh = new THREE.Mesh(geometry, material)
-                mesh.position.set(x - (width / 2), y - (height / 2), value * 30)
-                mesh.updateMatrix()
+                face.materialIndex = face2.materialIndex = materialIndex
 
-                mGeometry.merge(mesh.geometry, mesh.matrix)
+                # if geometry.vertices[vertexIndex]
+                #     geometry.vertices[vertexIndex].z = value * 30
+                # if geometry.vertices[vertexIndex + 1]
+                #     geometry.vertices[vertexIndex + 1].z = value * 30
+                # if geometry.vertices[vertexIndex + 2]
+                #     geometry.vertices[vertexIndex + 2].z = value * 30
+                # geometry.vertices[vertexIndex + 3] = value * 10
+                # geometry.vertices[vertexIndex + 4] = value * 10
+                # geometry.vertices[vertexIndex + 5] = value * 10
 
-        
-        @mapObject = new THREE.Mesh(mGeometry, new THREE.MeshNormalMaterial())
+        geometry.facesNeedUpdate
+        geometry.verticesNeedUpdate
+        # @mapObject = new THREE.Mesh(geometry, new THREE.MeshNormalMaterial({ wireframe: true }))
+        @mapObject = new THREE.Mesh(geometry, materials)
+
         @scene.add @mapObject
 
 
