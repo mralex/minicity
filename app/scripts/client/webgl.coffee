@@ -5,8 +5,8 @@ Stats = require '../lib/stats'
 
 class Client
     constructor: ->
-        @width = 1920
-        @height = 1080
+        @width = 1280
+        @height = 720
 
         window.THREE = THREE
 
@@ -18,7 +18,9 @@ class Client
         # @camera.rotation.y = - Math.PI / 4
         # @camera.rotation.x = Math.atan(-1 / Math.sqrt(2))
 
-        @renderer = new THREE.WebGLRenderer
+        @renderer = new THREE.WebGLRenderer {
+            alpha: true
+        }
 
         @renderer.setSize @width, @height
         @renderer.setClearColor 0xffffff
@@ -39,7 +41,20 @@ class Client
         @initializeStats()
 
         @controls = new OrbitControls @camera, @renderer.domElement
-        # @controls.noZoom = true
+        @controls.noRotate = true
+
+        @raycaster = new THREE.Raycaster
+        @projector = new THREE.Projector
+        @intersection
+        @vector = new THREE.Vector3
+        @mouse = {
+            x: Infinity
+            y: Infinity
+        }
+
+        @renderer.domElement.addEventListener 'mousemove', @handleMouseMove, false
+        @renderer.domElement.addEventListener 'mouseover', @handleMouseOver, false
+        @renderer.domElement.addEventListener 'mouseout', @handleMouseOut, false
 
     initializeStats: ->
         @stats = new Stats()
@@ -114,18 +129,73 @@ class Client
 
         geometry.facesNeedUpdate
         geometry.verticesNeedUpdate
-        # @mapObject = new THREE.Mesh(geometry, new THREE.MeshNormalMaterial({ wireframe: true }))
         @mapObject = new THREE.Mesh(geometry, materials)
 
         @scene.add @mapObject
 
+    handleMouseMove: (e) =>
+        e.preventDefault()
+
+        left = @renderer.domElement.offsetLeft
+        top = @renderer.domElement.offsetTop
+        width = @renderer.domElement.offsetWidth
+        height = @renderer.domElement.offsetHeight
+
+        @mouse.x = ((e.clientX - left) / width) * 2 - 1
+        @mouse.y = -((e.clientY - top) / height) * 2 + 1
+
+    handleMouseOver: (e) =>
+        @mouseOver = true
+
+    handleMouseOut: (e) =>
+        @mouseOver = false
+
+    showCursor: ->
+        if not @cursor
+            console.log 'foo'
+            geometry = new THREE.PlaneGeometry 1, 1, 1
+            material = new THREE.MeshBasicMaterial {
+                color: 0x333333
+                transparent: true
+                opacity: 0.6
+                visible: false
+            }
+            @cursor = new THREE.Mesh geometry, material
+            @cursor.scale.set 2, 2, 1
+            @cursor.position.set 0, 0, 0.5
+            @scene.add @cursor
+
+        @cursor.position.set @intersection.point.x, @intersection.point.y, 0.5
+        @cursor.material.visible = true
+        @cursor.material.needsUpdate
+
+    removeCursor: ->
+        if @cursor
+            @cursor.material.visible = false
+            @cursor.material.needsUpdate
 
     render: =>
         @stats.begin()
-        # @mapObject.rotation.x += 0.01
-        # @mapObject.rotation.y += 0.1
+
+        if @mouseOver
+            vector = new THREE.Vector3(@mouse.x, @mouse.y, 1)
+            @projector.unprojectVector vector, @camera
+            @raycaster.ray.set(@camera.position, vector.sub(@camera.position).normalize())
+
+            intersections = @raycaster.intersectObjects [@mapObject]
+            intersection = if intersections.length > 0 then intersections[0] else null
+
+            if intersection
+                @intersection = intersection
+                @showCursor()
+            else
+                @removeCursor()
+        else
+            @removeCursor()
+
         @renderer.render @scene, @camera
         @stats.end()
+
         window.requestAnimationFrame @render
 
 module.exports = Client
