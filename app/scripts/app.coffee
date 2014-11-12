@@ -6,7 +6,7 @@ canvasClient = require './client/canvas.coffee'
 class App
     constructor: ->
         @client = window.client = new webGLClient()
-        document.getElementById('canvas').appendChild @client.canvas
+        document.getElementById('canvas').appendChild @client.renderer.canvas
 
         return @
 
