@@ -150,7 +150,7 @@ class Client
     handleMouseOut: (e) =>
         @mouseOver = false
 
-    showCursor: ->
+    showCursor: (point) ->
         if not @cursor
             console.log 'foo'
             geometry = new THREE.PlaneGeometry 1, 1, 1
@@ -162,10 +162,16 @@ class Client
             }
             @cursor = new THREE.Mesh geometry, material
             @cursor.scale.set 2, 2, 1
-            @cursor.position.set 0, 0, 0.5
+            @cursor.position.set 0, 0, 0
             @scene.add @cursor
 
-        @cursor.position.set @intersection.point.x, @intersection.point.y, 0.5
+        # Snap to nearest grid 
+        gridCellWidth = 2
+        gridCellHeight = 2
+        point.x = (Math.floor(point.x / gridCellWidth) * gridCellWidth) + 1
+        point.y = (Math.floor(point.y / gridCellHeight) * gridCellHeight) + 1
+
+        @cursor.position.set point.x, point.y, 0
         @cursor.material.visible = true
         @cursor.material.needsUpdate
 
@@ -187,7 +193,7 @@ class Client
 
             if intersection
                 @intersection = intersection
-                @showCursor()
+                @showCursor(@intersection.point)
             else
                 @removeCursor()
         else
