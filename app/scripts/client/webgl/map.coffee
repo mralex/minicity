@@ -3,6 +3,14 @@ THREE = require 'three'
 Map = require '../../game/map.coffee'
 
 class MapObject
+    types: {
+        water: new THREE.Color 0x003fff
+        tideWater: new THREE.Color 0x1111aa
+        sand: new THREE.Color 0xf2e077
+        grass: new THREE.Color 0x4bdb33
+        hills: new THREE.Color 0x228b22
+    }
+
     constructor: (width, height) ->
         @width = width
         @height = height
@@ -15,59 +23,58 @@ class MapObject
         @initializeGeometry()
 
     initializeGeometry: ->
-        mWater = new THREE.MeshLambertMaterial({ color: 0x003fff })
-        mTideWater = new THREE.MeshLambertMaterial({ color: 0x1111aa })
-        mSand = new THREE.MeshLambertMaterial({ color: 0xf2e077 })
-        mGrass = new THREE.MeshLambertMaterial({ color: 0x4dbd33 })
-        mHills = new THREE.MeshLambertMaterial({ color: 0x228b22 })
-        materials = new THREE.MeshFaceMaterial([
-            mWater
-            mTideWater
-            mSand
-            mGrass
-            mHills
-        ])
+        geometry = new THREE.PlaneGeometry 1, 1, 20, 20
+        material = new THREE.MeshLambertMaterial {
+            color: 0xffffff
+            map: @generateTexture()
+        }
+        @map = new THREE.Mesh geometry, material
+        @map.scale.set @width, @height, 1
 
-        geometry = new THREE.PlaneGeometry(@width, @height, @width,@height)
+    generateTexture: ->
+        canvas = document.createElement 'canvas'
+        ctx = canvas.getContext '2d'
+
+        canvas.width = @width
+        canvas.height = @height
+        ctx.clearRect 0, 0, @width, @height
+
+        imagedata = ctx.getImageData 0, 0, @width, @height
+        data = imagedata.data
 
         for y in [0...@height]
             for x in [0...@width]
                 value = @mapData.tileAt x, y
-                # faceIndex = (y * width * 2) + x * 2
-                faceIndex = (x * @height * 2) + y * 2
-                face = geometry.faces[faceIndex]
-                face2 = geometry.faces[faceIndex + 1]
-
-                vertexIndex = (y * @width) + x
+                i = (y * @width * 4) + x * 4
+                color = null
 
                 if value < 0
-                    materialIndex = 0
+                    color = @types.water
                 else if value > 0 and value < 0.008
-                    materialIndex = 1
+                    color = @types.tideWater
                 # Sand
                 else if value > 0.008 and value < 0.0161
-                    materialIndex = 2
+                    color = @types.sand
                 # Grass
                 else if value > 0.0161 and value < 0.2
-                    materialIndex = 3
+                    color = @types.grass
                 # Tundra
                 else
-                    materialIndex = 4
+                    color = @types.hills
 
-                face.materialIndex = face2.materialIndex = materialIndex
+                if color
+                    data[i] = Math.round color.r * 255
+                    data[i + 1] = Math.round color.g * 255
+                    data[i + 2] = Math.round color.b * 255
+                    data[i + 3] = 255
 
-                # if geometry.vertices[vertexIndex]
-                #     geometry.vertices[vertexIndex].z = value * 30
-                # if geometry.vertices[vertexIndex + 1]
-                #     geometry.vertices[vertexIndex + 1].z = value * 30
-                # if geometry.vertices[vertexIndex + 2]
-                #     geometry.vertices[vertexIndex + 2].z = value * 30
-                # geometry.vertices[vertexIndex + 3] = value * 10
-                # geometry.vertices[vertexIndex + 4] = value * 10
-                # geometry.vertices[vertexIndex + 5] = value * 10
+        ctx.putImageData imagedata, 0, 0
 
-        geometry.facesNeedUpdate
-        geometry.verticesNeedUpdate
-        @map = new THREE.Mesh(geometry, materials)
+        @texture = new THREE.Texture canvas
+        @texture.magFilter = THREE.NearestFilter
+        @texture.minFilter = THREE.NearestFilter
+        @texture.needsUpdate = true
+
+        return @texture
 
 module.exports = MapObject
