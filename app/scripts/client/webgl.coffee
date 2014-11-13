@@ -1,3 +1,4 @@
+_ = require 'underscore'
 THREE = require 'three'
 OrbitControls = require '../lib/orbit_controls'
 MapObject = require './webgl/map.coffee'
@@ -23,6 +24,10 @@ class Client
 
         @controls = new OrbitControls @renderer.camera, @renderer.canvas
         @controls.noRotate = true
+
+        @mouseHandler.on 'mousedown', @handleMouseDown
+        @mouseHandler.on 'mouseup', @handleMouseUp
+        @mouseHandler.on 'mousemove', @handleMouseMove
 
     initializeStats: ->
         @stats = new Stats()
@@ -67,6 +72,59 @@ class Client
         if @cursor
             @cursor.material.visible = false
             @cursor.material.needsUpdate
+
+    handleMouseDown: (mousePosition, position) =>
+        @mouseDown = true
+
+        if position
+            @absoluteStartPosition = _.clone position
+
+    handleMouseUp: (mousePosition, position) =>
+        @mouseDown = false
+
+        if @selection
+            @selection.material.visible = false
+            @selection.material.needsUpdate
+
+    handleMouseMove: (mousePosition, position) =>
+        if not @mouseDown or not position
+            return
+
+        @absolutePosition = _.clone position
+
+        if not @selection
+            geometry = new THREE.PlaneGeometry 1, 1
+            material = new THREE.MeshBasicMaterial {
+                color: 0x333333
+                transparent: true
+                opacity: 0.4
+                visible: false
+            }
+            @selection = new THREE.Mesh geometry, material
+            @renderer.getScene().add @selection
+
+        start = new THREE.Vector2 Math.min(@absoluteStartPosition.x, @absolutePosition.x), Math.min(@absoluteStartPosition.y, @absolutePosition.y)
+        end = new THREE.Vector2 Math.max(@absoluteStartPosition.x, @absolutePosition.x), Math.max(@absoluteStartPosition.y, @absolutePosition.y)
+
+        # Snap to grid
+        gridCellWidth = 2
+        gridCellHeight = 2
+        start.x = (Math.floor(start.x / gridCellWidth) * gridCellWidth)
+        start.y = (Math.floor(start.y / gridCellHeight) * gridCellHeight)
+        end.x = (Math.floor(end.x / gridCellWidth) * gridCellWidth)
+        end.y = (Math.floor(end.y / gridCellHeight) * gridCellHeight)
+
+        width = Math.abs(end.x - start.x) or gridCellWidth
+        height = Math.abs(end.y - start.y) or gridCellHeight
+
+        cx = width / 2 + start.x
+        cy = height / 2 + start.y
+
+        @selection.scale.set width, height, 1
+        @selection.position.set cx, cy, 0
+
+        @selection.material.visible = true
+        @selection.material.needsUpdate
 
     render: =>
         @stats.begin()

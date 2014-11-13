@@ -161,10 +161,17 @@ module.exports = function(grunt) {
         options: {
           debug: true,
           transform: ['debowerify'],
-          require: ['jquery', 'lodash', 'backbone'],
+          require: [
+            'jquery',
+            'lodash',
+            'backbone',
+            './app/bower_components/threejs-build/build/three.js',
+            './app/bower_components/backbone-events-standalone/backbone-events-standalone.js'
+          ],
 
           alias: [
             'lodash:underscore',
+            'app/bower_components/backbone-events-standalone/backbone-events-standalone:backbone.events',
             'app/bower_components/threejs-build/build/three:three'
           ]
         }
@@ -175,8 +182,17 @@ module.exports = function(grunt) {
         options: {
           debug: true,
           transform: ['coffeeify', 'debowerify'],
-          external: ['jquery', 'lodash', 'backbone'],
-          alias: ['app/bower_components/threejs-build/build/three:three'],
+          external: [
+            'jquery',
+            'lodash',
+            'backbone',
+            './app/bower_components/threejs-build/build/three.js',
+            './app/bower_components/backbone-events-standalone/backbone-events-standalone.js'
+          ],
+          alias: [
+            'app/bower_components/backbone-events-standalone/backbone-events-standalone:backbone.events',
+            'app/bower_components/threejs-build/build/three:three'
+          ],
           browserifyOptions: {
             debug: true
           }
