@@ -40,7 +40,7 @@ class Client
         document.body.appendChild(@stats.domElement);
 
     initializeMap: ->
-        @mapObject = new MapObject 256, 256
+        @mapObject = new MapObject 512, 512
         @renderer.getScene().add @mapObject.map
 
     showCursor: (point) ->
