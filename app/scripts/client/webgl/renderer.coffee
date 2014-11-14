@@ -2,10 +2,7 @@
 THREE = require 'three'
 
 class Renderer
-	constructor: (width=1280, height=720) ->
-		@width = width
-		@height = height
-
+	constructor: ->
 		window.THREE = THREE
 
 		@scene = new THREE.Scene

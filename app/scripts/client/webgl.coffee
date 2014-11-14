@@ -12,9 +12,7 @@ MouseHandler = require './webgl/mouse.coffee'
 
 class Client
     constructor: ->
-        @width = 1280
-        @height = 720
-        @renderer = new Renderer @width, @height
+        @renderer = new Renderer
         @mouseHandler = new MouseHandler @renderer
 
         window.THREE = THREE
