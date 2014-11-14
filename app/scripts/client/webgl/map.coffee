@@ -11,14 +11,12 @@ class MapObject
         hills: new THREE.Color 0x228b22
     }
 
-    constructor: (width, height) ->
-        @width = width
-        @height = height
+    constructor: (city) ->
+        @city = city
+        @width = city.width
+        @height = city.height
 
         @map = new THREE.Object3D
-
-        @mapData = new Map @width, @height
-        @mapData.generate()
 
         @initializeGeometry()
 
@@ -44,7 +42,7 @@ class MapObject
 
         for y in [0...@height]
             for x in [0...@width]
-                value = @mapData.tileAt x, y
+                value = @city.terrain.tileAt x, y
                 i = (y * @width * 4) + x * 4
                 color = null
 

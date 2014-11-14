@@ -4,8 +4,11 @@ OrbitControls = require '../lib/orbit_controls'
 MapObject = require './webgl/map.coffee'
 Stats = require '../lib/stats'
 
+City = require '../game/city.coffee'
+
 Renderer = require './webgl/renderer.coffee'
 MouseHandler = require './webgl/mouse.coffee'
+
 
 class Client
     constructor: ->
@@ -16,8 +19,8 @@ class Client
 
         window.THREE = THREE
 
-        console.log 'initializing map'
-        @initializeMap()
+        console.log 'initializing city'
+        @initializeCity()
         console.log 'done!'
 
         @initializeStats()
@@ -39,9 +42,10 @@ class Client
 
         document.body.appendChild(@stats.domElement);
 
-    initializeMap: ->
-        @mapObject = new MapObject 512, 512
-        @renderer.getScene().add @mapObject.map
+    initializeCity: ->
+        @city = new City 512, 512
+        @terrainObject = new MapObject @city
+        @renderer.getScene().add @terrainObject.map
 
     showCursor: (point) ->
         gridCellWidth = 2
@@ -130,7 +134,7 @@ class Client
         @stats.begin()
 
         @renderer.update()
-        @mouseHandler.update([@mapObject.map])
+        @mouseHandler.update([@terrainObject.map])
 
         if @mouseHandler.mouseOver
             if @mouseHandler.intersection
