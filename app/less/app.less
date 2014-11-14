@@ -32,3 +32,50 @@ canvas {
    top: 0;
    left: 0;
 }
+
+.ui {
+   z-index: 1000;
+   position: absolute;
+   bottom: 0px;
+   left: 0;
+   width: 100%;
+   text-align: center;
+
+   .ui-menu {
+      list-style: none;
+      padding: 20px 15px;
+      margin: 0;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+      display: inline-block;
+
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+
+      background: rgba(0, 0, 0, 0.66);
+
+      li {
+         display: inline-block;
+         margin: 0 5px;
+         padding: 0;
+
+         &:first-child {
+            margin-left: 0;
+         }
+         &:last-child {
+            margin-right: 0;
+         }
+
+         a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+
+            &:hover {
+               background: rgba(32, 32, 32, 0.5);
+            }
+         }
+      }
+   }
+}
