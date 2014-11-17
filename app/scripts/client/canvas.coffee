@@ -1,7 +1,6 @@
 # Canvas test client
 # For Perlin testing I guess
 
-Perlin = require '../lib/perlin.coffee'
 Map = require '../game/map.coffee'
 
 class Client

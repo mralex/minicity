@@ -170,7 +170,7 @@ module.exports = function(grunt) {
           ],
 
           alias: [
-            'lodash:underscore',
+            // 'lodash:underscore',
             'app/bower_components/backbone-events-standalone/backbone-events-standalone:backbone.events',
             'app/bower_components/threejs-build/build/three:three'
           ]

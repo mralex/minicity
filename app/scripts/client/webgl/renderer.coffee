@@ -19,13 +19,13 @@ class Renderer
 		}
 
 		@renderer.setSize window.innerWidth, window.innerHeight
-		@renderer.setClearColor 0x111111
+		@renderer.setClearColor 0xffffff
 
 		@canvas = @renderer.domElement
 
 		console.log 'adding lights'
 		@light = new THREE.PointLight(0xffffff, 1.1, 0)
-		@light.position.set(0.0, 0, 300)
+		@light.position.set(0.0, 0, 600)
 		@scene.add @light
 
 		window.addEventListener 'resize', @handleWindowResize

@@ -1,8 +1,12 @@
+$ = require 'jquery'
 _ = require 'underscore'
 THREE = require 'three'
 OrbitControls = require '../lib/orbit_controls'
-MapObject = require './webgl/map.coffee'
+TerrainMap = require './webgl/terrain_map.coffee'
+CityMap = require './webgl/city_map.coffee'
 Stats = require '../lib/stats'
+
+ToolbarView = require './ui/toolbar_view.coffee'
 
 City = require '../game/city.coffee'
 
@@ -11,7 +15,16 @@ MouseHandler = require './webgl/mouse.coffee'
 
 
 class Client
+    gridCellWidth: 8
+    gridCellHeight: 8
+    mapScale: 2
+    mapWidth: 512
+    mapHeight: 512
+
     constructor: ->
+        @toolbar = new ToolbarView { action: 'pointer', el: $('.js-toolbar') }
+        @toolbar.render()
+
         @renderer = new Renderer
         @mouseHandler = new MouseHandler @renderer
 
@@ -30,6 +43,11 @@ class Client
         @mouseHandler.on 'mouseup', @handleMouseUp
         @mouseHandler.on 'mousemove', @handleMouseMove
 
+        @action = 'pointer'
+        @toolbar.on 'action-changed', (action) =>
+            @action = action
+            console.log action
+
     initializeStats: ->
         @stats = new Stats()
         @stats.setMode 0
@@ -41,14 +59,14 @@ class Client
         document.body.appendChild(@stats.domElement);
 
     initializeCity: ->
-        @city = new City 512, 512
-        @terrainObject = new MapObject @city
-        @renderer.getScene().add @terrainObject.map
+        @city = new City @mapWidth, @mapHeight
+        @terrainMap = new TerrainMap @city, @mapScale
+        @cityMap = new CityMap @city, @mapScale, @
+
+        @renderer.getScene().add @terrainMap.map
+        @renderer.getScene().add @cityMap.map
 
     showCursor: (point) ->
-        gridCellWidth = 2
-        gridCellHeight = 2
-
         if not @cursor
             geometry = new THREE.PlaneGeometry 1, 1, 1
             material = new THREE.MeshBasicMaterial {
@@ -58,25 +76,26 @@ class Client
                 visible: false
             }
             @cursor = new THREE.Mesh geometry, material
-            @cursor.scale.set gridCellWidth, gridCellHeight, 1
-            @cursor.position.set 0, 0, 0
+            @cursor.scale.set @gridCellWidth, @gridCellHeight, 1
+            @cursor.position.set 0, 0, 0.1
             @renderer.getScene().add @cursor
 
         # Snap to nearest grid 
-        point.x = (Math.floor(point.x / gridCellWidth) * gridCellWidth) + 1
-        point.y = (Math.floor(point.y / gridCellHeight) * gridCellHeight) + 1
+        point.x = (Math.floor(point.x / @gridCellWidth) * @gridCellWidth) + (@gridCellWidth / 2)
+        point.y = (Math.floor(point.y / @gridCellHeight) * @gridCellHeight) + (@gridCellWidth / 2)
 
         @cursor.position.set point.x, point.y, 0
         @cursor.material.visible = true
         @cursor.material.needsUpdate
 
-    removeCursor: ->
+    hideCursor: ->
         if @cursor
             @cursor.material.visible = false
             @cursor.material.needsUpdate
 
     handleMouseDown: (mousePosition, position) =>
         @mouseDown = true
+        @hasSelection = false
 
         if position
             @absoluteStartPosition = _.clone position
@@ -84,14 +103,18 @@ class Client
     handleMouseUp: (mousePosition, position) =>
         @mouseDown = false
 
-        if @selection
+        if @selection and @hasSelection
             @selection.material.visible = false
             @selection.material.needsUpdate
+
+            if @action isnt 'pointer'
+                @cityMap.addToMap @action, @selection.position.x, @selection.position.y, @selection.scale.x, @selection.scale.y
 
     handleMouseMove: (mousePosition, position) =>
         if not @mouseDown or not position
             return
 
+        @hasSelection = true
         @absolutePosition = _.clone position
 
         if not @selection
@@ -109,38 +132,42 @@ class Client
         end = new THREE.Vector2 Math.max(@absoluteStartPosition.x, @absolutePosition.x), Math.max(@absoluteStartPosition.y, @absolutePosition.y)
 
         # Snap to grid
-        gridCellWidth = 2
-        gridCellHeight = 2
-        start.x = (Math.floor(start.x / gridCellWidth) * gridCellWidth)
-        start.y = (Math.floor(start.y / gridCellHeight) * gridCellHeight)
-        end.x = (Math.floor(end.x / gridCellWidth) * gridCellWidth)
-        end.y = (Math.floor(end.y / gridCellHeight) * gridCellHeight)
+        start.x = (Math.floor(start.x / @gridCellWidth) * @gridCellWidth)
+        start.y = (Math.floor(start.y / @gridCellHeight) * @gridCellHeight)
+        end.x = (Math.floor(end.x / @gridCellWidth) * @gridCellWidth)
+        end.y = (Math.floor(end.y / @gridCellHeight) * @gridCellHeight)
 
-        width = Math.abs(end.x - start.x) or gridCellWidth
-        height = Math.abs(end.y - start.y) or gridCellHeight
+        width = Math.abs(end.x - start.x) + @gridCellWidth
+        height = Math.abs(end.y - start.y) + @gridCellHeight
+
+        if @action in ['road', 'powerline']
+            if width > height
+                height = @gridCellHeight
+            else
+                width = @gridCellWidth
 
         cx = width / 2 + start.x
         cy = height / 2 + start.y
 
         @selection.scale.set width, height, 1
-        @selection.position.set cx, cy, 0
+        @selection.position.set cx, cy, 0.1
 
         @selection.material.visible = true
-        @selection.material.needsUpdate
+        @selection.material.needsUpdate = true
 
     render: =>
         @stats.begin()
 
         @renderer.update()
-        @mouseHandler.update([@terrainObject.map])
+        @mouseHandler.update([@terrainMap.map])
 
-        if @mouseHandler.mouseOver
+        if @mouseHandler.mouseOver and not @mouseDown
             if @mouseHandler.intersection
                 @showCursor(@mouseHandler.intersection.point)
             else
-                @removeCursor()
+                @hideCursor()
         else
-            @removeCursor()
+            @hideCursor()
 
         
         @renderer.render()

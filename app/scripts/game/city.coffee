@@ -26,4 +26,8 @@ class City
 	getTile: (x, y) ->
 		@map[@_posForXY(x, y)]
 
+	action: (action, x, y) ->
+		# Action is either 'build' or 'destroy'
+
+
 module.exports = City

@@ -2,19 +2,21 @@
 THREE = require 'three'
 Map = require '../../game/map.coffee'
 
-class MapObject
+class TerrainMap
     types: {
         water: new THREE.Color 0x003fff
         tideWater: new THREE.Color 0x1111aa
         sand: new THREE.Color 0xf2e077
-        grass: new THREE.Color 0x4bdb33
-        hills: new THREE.Color 0x228b22
+        # grass: new THREE.Color 0x4bdb33
+        grass: new THREE.Color 0x228b22
+        hills: new THREE.Color 0x117a11
     }
 
-    constructor: (city) ->
+    constructor: (city, scale) ->
         @city = city
         @width = city.width
         @height = city.height
+        @scale = scale
 
         @map = new THREE.Object3D
 
@@ -27,7 +29,7 @@ class MapObject
             map: @generateTexture()
         }
         @map = new THREE.Mesh geometry, material
-        @map.scale.set @width, @height, 1
+        @map.scale.set @width * @scale, @height * @scale, 1
 
     generateTexture: ->
         canvas = document.createElement 'canvas'
@@ -75,4 +77,4 @@ class MapObject
 
         return @texture
 
-module.exports = MapObject
+module.exports = TerrainMap
