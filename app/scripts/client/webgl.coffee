@@ -17,9 +17,9 @@ MouseHandler = require './webgl/mouse.coffee'
 class Client
     gridCellWidth: 8
     gridCellHeight: 8
-    mapScale: 2
-    mapWidth: 512
-    mapHeight: 512
+    mapScale: 1
+    mapWidth: 1024
+    mapHeight: 1024
 
     constructor: ->
         @toolbar = new ToolbarView { action: 'pointer', el: $('.js-toolbar') }
