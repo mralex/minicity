@@ -30,6 +30,7 @@ class TerrainMap
         }
         @map = new THREE.Mesh geometry, material
         @map.scale.set @width * @scale, @height * @scale, 1
+        # @map.rotation.x = -(0.0174532925 * 90)
 
     generateTexture: ->
         canvas = document.createElement 'canvas'
@@ -73,6 +74,7 @@ class TerrainMap
         @texture = new THREE.Texture canvas
         @texture.magFilter = THREE.NearestFilter
         @texture.minFilter = THREE.NearestFilter
+        @texture.generateMipmaps = false
         @texture.needsUpdate = true
 
         return @texture

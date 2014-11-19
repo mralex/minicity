@@ -58,10 +58,9 @@ class MouseHandler
     update: (raycastObjects) ->
         if @mouseOver
             vector = new THREE.Vector3(@mouse.x, @mouse.y, 1)
-            @projector.unprojectVector vector, @renderer.camera
-            @raycaster.ray.set(@renderer.camera.position, vector.sub(@renderer.camera.position).normalize())
+            ray = @projector.pickingRay(vector, @renderer.camera)
 
-            intersections = @raycaster.intersectObjects raycastObjects
+            intersections = ray.intersectObjects raycastObjects
             @intersection = if intersections.length > 0 then intersections[0] else null
 
 

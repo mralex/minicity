@@ -1,18 +1,23 @@
 
 THREE = require 'three'
+IsometricCamera = require './isometric_camera.coffee'
 
 class Renderer
 	constructor: ->
 		window.THREE = THREE
+		rad = 0.0174532925
 
 		@scene = new THREE.Scene
-		@camera = new THREE.PerspectiveCamera 90, window.innerWidth / window.innerHeight, 0.1, 1000
 
-		@camera.position.set(0, 0, 100)
+		# @camera.position.set -300, 0, 400
 		# @camera.rotation.order = 'YXZ'
 		# @camera.rotation.y = - Math.PI / 4
 		# @camera.rotation.x = Math.atan(-1 / Math.sqrt(2))
-		@camera.rotation.set(0, 0, 0)
+		# @camera.rotation.set(
+		# 	45 * rad,
+		# 	-45 * rad,
+		# 	-30 * rad
+		# )
 
 		@renderer = new THREE.WebGLRenderer {
 		    alpha: true
@@ -23,9 +28,13 @@ class Renderer
 
 		@canvas = @renderer.domElement
 
+		@isometricCamera = new IsometricCamera @canvas
+		@camera = @isometricCamera.camera
+
 		console.log 'adding lights'
 		@light = new THREE.PointLight(0xffffff, 1.1, 0)
-		@light.position.set(0.0, 0, 600)
+		# @light.position.set(0.0, 0, 600)
+		@light.position.set(0.0, 0, 500)
 		@scene.add @light
 
 		window.addEventListener 'resize', @handleWindowResize
@@ -34,8 +43,8 @@ class Renderer
 		@scene
 
 	handleWindowResize: (e) =>
-		@camera.aspect = window.innerWidth / window.innerHeight
-		@camera.updateProjectionMatrix()
+		@isometricCamera.update()
+
 		@renderer.setSize window.innerWidth, window.innerHeight
 
 	update: ->

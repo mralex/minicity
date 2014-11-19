@@ -1,7 +1,7 @@
 $ = require 'jquery'
 _ = require 'underscore'
 THREE = require 'three'
-OrbitControls = require '../lib/orbit_controls'
+TrackballControls = require '../lib/orbit_controls'
 TerrainMap = require './webgl/terrain_map.coffee'
 CityMap = require './webgl/city_map.coffee'
 Stats = require '../lib/stats'
@@ -36,7 +36,7 @@ class Client
 
         @initializeStats()
 
-        @controls = new OrbitControls @renderer.camera, @renderer.canvas
+        @controls = new TrackballControls @renderer.camera, @renderer.canvas
         @controls.noRotate = true
 
         @mouseHandler.on 'mousedown', @handleMouseDown
@@ -77,14 +77,20 @@ class Client
             }
             @cursor = new THREE.Mesh geometry, material
             @cursor.scale.set @gridCellWidth, @gridCellHeight, 1
-            @cursor.position.set 0, 0, 0.1
+            @cursor.position.set 0, 0, 0.5
             @renderer.getScene().add @cursor
+
+        # matrix = new THREE.Matrix4
+        # matrix.makeScale Math.sqrt(2) / 2, Math.sqrt(2) / 4, 1
+        # matrix.makeRotationZ -(0.0174532925 * 45)
+
+        # point.applyMatrix4 matrix
 
         # Snap to nearest grid 
         point.x = (Math.floor(point.x / @gridCellWidth) * @gridCellWidth) + (@gridCellWidth / 2)
         point.y = (Math.floor(point.y / @gridCellHeight) * @gridCellHeight) + (@gridCellWidth / 2)
 
-        @cursor.position.set point.x, point.y, 0
+        @cursor.position.set point.x, point.y, 0.1
         @cursor.material.visible = true
         @cursor.material.needsUpdate
 
@@ -167,9 +173,10 @@ class Client
             else
                 @hideCursor()
         else
-            @hideCursor()
+            # @hideCursor()
 
         
+        # @controls.update()
         @renderer.render()
         @stats.end()
 
