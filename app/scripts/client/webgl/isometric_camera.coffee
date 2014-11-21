@@ -12,11 +12,10 @@ class IsometricCamera
 		@minZoom = 400
 		@camera = new THREE.OrthographicCamera -@viewSize * @_aspect, @viewSize * @_aspect, @viewSize, -@viewSize, -10000, 10000
 
-		@camera.position.set 200, 200, 125
+		@camera.position.set 125, 125, 125
 		@camera.up = new THREE.Vector3 0, 0, 1
 		@camera.lookAt new THREE.Vector3 0, 0, 0
 
-		window.addEventListener 'resize', @handleWindowResize
 		@domElement.addEventListener 'mousewheel', @handleMouseWheel
 
 	setCameraSize: (size) ->
@@ -53,3 +52,4 @@ class IsometricCamera
 		@setCameraSize(@viewSize - (delta * 10))
 
 module.exports = IsometricCamera
+	

@@ -33,7 +33,6 @@ class Renderer
 
 	handleWindowResize: (e) =>
 		@isometricCamera.update()
-
 		@renderer.setSize window.innerWidth, window.innerHeight
 
 	update: ->
