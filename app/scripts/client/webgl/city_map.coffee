@@ -26,6 +26,7 @@ class CityMap
         @scale = scale
 
         @map = new THREE.Object3D
+        @elements = []
 
         @initializeGeometry()
 
@@ -53,8 +54,28 @@ class CityMap
         mesh.scale.set w, h, 1
         mesh.position.set x, y, 0.1
         mesh.updateMatrix()
-
+        mesh.type = type
+        @elements.push mesh
+        # console.time 'merging'
         @cityMasterGeometry.merge mesh.geometry, mesh.matrix, @typeIndexes[type]
         @cityMasterGeometry.groupsNeedUpdate = true
+        # console.timeEnd 'merging'
+
+        if @elements.length % 10 is 0
+            console.log 're-merging (' + @elements.length + ')'
+            console.time 're-merging'
+            @remerge()
+            console.timeEnd 're-merging'
+
+    remerge: ->
+        geometry = new THREE.Geometry
+        geometry.dynamic = true
+
+        map = new THREE.Mesh geometry, new THREE.MeshFaceMaterial(@materials)
+        for mesh in @elements
+            geometry.merge mesh.geometry, mesh.matrix, @typeIndexes[mesh.type]
+
+        map
+
 
 module.exports = CityMap
