@@ -16,8 +16,8 @@ class World
 		@chunks = {}
 
 	_chunkPositionForWorldPosition: (position) ->
-		x = Math.floor(position.x / @tileSize.x / @chunkSize.x)
-		y = Math.floor(position.y / @tileSize.y / @chunkSize.y)
+		x = Math.floor((position.x / @tileSize.x) / @chunkSize.x)
+		y = Math.floor((position.y / @tileSize.y) / @chunkSize.y)
 
 		new THREE.Vector2(x, y)
 
@@ -32,7 +32,7 @@ class World
 		key = chunkPosition.x + ',' + chunkPosition.y
 
 		if key not of @chunks
-			@chunks[key] = new Chunk(@chunkSize, position, @)
+			@chunks[key] = new Chunk(@chunkSize, chunkPosition, @)
 
 		@chunks[key]
 

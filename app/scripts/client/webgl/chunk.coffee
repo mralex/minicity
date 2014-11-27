@@ -22,12 +22,12 @@ class Chunk
 	showBounding: ->
 		geometry = new THREE.BoxGeometry 1, 1, 1
 		material = new THREE.MeshBasicMaterial({
-			color: 0xff8888
+			color: 0x880000
 			wireframe: true
 		})
 		mesh = new THREE.Mesh geometry, material
 		mesh.scale.set 16 * 8, 16 * 8, 16 * 8
-		mesh.position.set @position.x + 16 * 4 - 4, @position.y + 16 * 4 - 4, 8 * 8
+		mesh.position.set @position.x * 16 * 8 + 16 * 4, @position.y * 16 * 8 + 16 * 4, 8 * 8
 
 		@world.scene.add mesh
 

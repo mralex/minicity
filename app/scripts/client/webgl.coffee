@@ -123,7 +123,7 @@ class Client
         if position
             chunkPos = @world._chunkPositionForWorldPosition(position)
             chunkCoord = @world._worldPositionInChunk(position)
-            # console.log('chunk: ' + chunkPos.x, chunkPos.y)
+            console.log('chunk: ' + chunkPos.x, chunkPos.y)
             # console.log('position inside chunk: ' + chunkCoord.x, chunkCoord.y)
         if not @mouseDown or not position
             return
