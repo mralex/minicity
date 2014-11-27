@@ -90,6 +90,7 @@ class Chunk
 
 		for position in @_pendingEntities
 			@_chunkGeometry.merge @entities[position].geometry,  @entities[position].matrix, materialConstants.typeIndexes[ @entities[position].type]
+			@_chunkGeometry.groupsNeedUpdate = true
 		
 		@_pendingEntities = []			
 
