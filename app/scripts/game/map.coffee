@@ -2,6 +2,10 @@
 # Map Generator
 # 
 
+# Fun seeds
+#
+# 0.7784539335407317
+
 Perlin = require '../lib/perlin.coffee'
 MapTypes = require './map_types.coffee'
 

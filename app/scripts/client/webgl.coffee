@@ -3,7 +3,6 @@ _ = require 'underscore'
 THREE = require 'three'
 TrackballControls = require '../lib/orbit_controls'
 TerrainMap = require './webgl/terrain_map.coffee'
-CityMap = require './webgl/city_map.coffee'
 Stats = require '../lib/stats'
 
 ToolbarView = require './ui/toolbar_view.coffee'
@@ -12,6 +11,8 @@ City = require '../game/city.coffee'
 
 Renderer = require './webgl/renderer.coffee'
 MouseHandler = require './webgl/mouse.coffee'
+
+World = require './webgl/world.coffee'
 
 
 class Client
@@ -59,12 +60,14 @@ class Client
         document.body.appendChild(@stats.domElement);
 
     initializeCity: ->
+        @world = new World @mapWidth / @gridCellWidth, @mapHeight / @gridCellHeight, @renderer.getScene()
+
         @city = new City @mapWidth, @mapHeight
         @terrainMap = new TerrainMap @city, @mapScale
-        @cityMap = new CityMap @city, @mapScale, @
+        # @cityMap = new CityMap @city, @mapScale, @world, @
 
         @renderer.getScene().add @terrainMap.map
-        @renderer.getScene().add @cityMap.map
+        # @renderer.getScene().add @cityMap.map
 
     showCursor: (point) ->
         if not @cursor
@@ -114,9 +117,14 @@ class Client
             @selection.material.needsUpdate
 
             if @action isnt 'pointer'
-                @cityMap.addToMap @action, @selection.position.x, @selection.position.y, @selection.scale.x, @selection.scale.y
+                @world.addTiles @action, @selection.position.x, @selection.position.y, @selection.scale.x, @selection.scale.y
 
     handleMouseMove: (mousePosition, position) =>
+        if position
+            chunkPos = @world._chunkPositionForWorldPosition(position)
+            chunkCoord = @world._worldPositionInChunk(position)
+            # console.log('chunk: ' + chunkPos.x, chunkPos.y)
+            # console.log('position inside chunk: ' + chunkCoord.x, chunkCoord.y)
         if not @mouseDown or not position
             return
 
@@ -165,6 +173,7 @@ class Client
         @stats.begin()
 
         @renderer.update()
+        @world.update()
         @mouseHandler.update([@terrainMap.map])
 
         if @mouseHandler.mouseOver and not @mouseDown
