@@ -14,10 +14,11 @@ class Chunk
 
 		@_isDirty = false
 
-		@showBounding()
+		# @showBounding()
 
 	destroy: ->
 		# Remove geometry from scene
+		@_destroyGeometry()
 
 	showBounding: ->
 		geometry = new THREE.BoxGeometry 1, 1, 1
@@ -65,10 +66,7 @@ class Chunk
 		position.x + ',' + position.y
 
 	_destroyGeometry: ->
-		unless @_chunkMesh
-			return
-
-		@world.scene.remove @_chunkMesh
+		@world.scene.remove @_chunkMesh if @_chunkMesh
 		@_chunkMesh = undefined
 
 	_generateGeometry: ->
