@@ -40,6 +40,7 @@ class Chunk
 			# @entities[key].destroy()
 			@_destroyGeometry()
 
+		tile.chunk = @
 		@entities[key] = tile
 		@_pendingEntities.push key
 
@@ -78,7 +79,8 @@ class Chunk
 			@_chunkGeometry.dynamic = true
 
 			for position,tile of @entities
-				@_chunkGeometry.merge tile.geometry, tile.matrix, materialConstants.typeIndexes[tile.type]
+				mesh = tile.getMesh()
+				@_chunkGeometry.merge mesh.geometry, mesh.matrix, materialConstants.typeIndexes[tile.type]
 
 			@_chunkMesh = new THREE.Mesh @_chunkGeometry, new THREE.MeshFaceMaterial(materialConstants.materials)
 
@@ -87,7 +89,8 @@ class Chunk
 			@world.scene.add @_chunkMesh
 
 		for position in @_pendingEntities
-			@_chunkGeometry.merge @entities[position].geometry,  @entities[position].matrix, materialConstants.typeIndexes[ @entities[position].type]
+			mesh = @entities[position].getMesh()
+			@_chunkGeometry.merge mesh.geometry,  mesh.matrix, materialConstants.typeIndexes[@entities[position].type]
 			@_chunkGeometry.groupsNeedUpdate = true
 		
 		@_pendingEntities = []			

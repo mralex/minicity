@@ -1,6 +1,8 @@
 THREE = require 'three'
 Chunk = require './chunk.coffee'
 materialConstants = require './materials.coffee'
+TileTypes = require './tiles/tiles.coffee'
+
 
 class World
 	constructor: (width=128, height=128, scene) ->
@@ -80,14 +82,16 @@ class World
 					origin.y + (@tileSize.y * _y)
 				)
 
-				geometry = new THREE.PlaneGeometry 1, 1
-				mesh = new THREE.Mesh geometry, materialConstants.materials[materialConstants.typeIndexes[type]]
-				mesh.scale.set @tileSize.x, @tileSize.y, 1
-				mesh.position.set position.x, position.y, 0.1
-				mesh.updateMatrix()
-				mesh.type = type
+				# geometry = new THREE.PlaneGeometry 1, 1
+				# mesh = new THREE.Mesh geometry, materialConstants.materials[materialConstants.typeIndexes[type]]
+				# mesh.scale.set @tileSize.x, @tileSize.y, 1
+				# mesh.position.set position.x, position.y, 0.1
+				# mesh.updateMatrix()
+				# mesh.type = type
+				tile = new TileTypes[type](position)
+				tile.type = type
 
-				@add(mesh, position, false)
+				@add(tile, position, false)
 
 		@_commitChunks()
 
