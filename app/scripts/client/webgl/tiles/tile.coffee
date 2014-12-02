@@ -28,7 +28,7 @@ class Tile
 		@mesh.updateMatrix()
 
 	setScale: ->
-		@mesh.scale.set @tileSize.x, @tileSize.y, Math.floor(Math.random() * 20 + 5)
+		@mesh.scale.set @tileSize.x, @tileSize.y, Math.floor(Math.random() * 5 + 5)
 
 	getMesh: ->
 		@mesh
