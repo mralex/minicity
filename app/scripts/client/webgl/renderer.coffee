@@ -22,8 +22,8 @@ class Renderer
 		@camera = @isometricCamera.camera
 
 		console.log 'adding lights'
-		@light = new THREE.PointLight(0xffffff, 1.1, 0)
-		@light.position.set(0.0, 0, 900)
+		@light = new THREE.DirectionalLight(0xffffff, 1.2)
+		@light.position.set(1, 2, 5).normalize()
 		@scene.add @light
 
 		window.addEventListener 'resize', @handleWindowResize
