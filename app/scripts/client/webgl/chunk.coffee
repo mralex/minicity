@@ -36,6 +36,9 @@ class Chunk
 		key = @_keyForPosition(position)
 
 		if key of @entities
+			if @entities[key].type is 'road'
+				return
+
 			# XXX Make this a deferred, so we can animate out destroyed tiles
 			# @entities[key].destroy()
 			@_destroyGeometry()
