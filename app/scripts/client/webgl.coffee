@@ -49,6 +49,12 @@ class Client
             @action = action
             console.log action
 
+        @toolbar.on 'interaction', (action) =>
+            if action is 'rotate-cw'
+                @renderer.isometricCamera.rotate true
+            if action is 'rotate-ccw'
+                @renderer.isometricCamera.rotate false
+
     initializeStats: ->
         @stats = new Stats()
         @stats.setMode 0

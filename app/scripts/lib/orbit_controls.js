@@ -292,6 +292,7 @@ var OrbitControls = function ( object, domElement ) {
 
 		position.copy( this.target ).add( offset );
 
+		this.object._target = this.target.clone();
 		this.object.lookAt( this.target );
 
 		thetaDelta = 0;
