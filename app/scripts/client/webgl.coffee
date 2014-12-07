@@ -77,16 +77,16 @@ class Client
 
     showCursor: (point) ->
         if not @cursor
-            geometry = new THREE.PlaneGeometry 1, 1, 1
-            material = new THREE.MeshBasicMaterial {
+            geometry = new THREE.BoxGeometry 1, 1, 1
+            material = new THREE.MeshLambertMaterial {
                 color: 0x333333
                 transparent: true
                 opacity: 0.4
                 visible: false
             }
             @cursor = new THREE.Mesh geometry, material
-            @cursor.scale.set @gridCellWidth, @gridCellHeight, 1
-            @cursor.position.set 0, 0, 0.5
+            @cursor.scale.set @gridCellWidth, @gridCellHeight, @gridCellHeight * 2
+            @cursor.position.set 0, 0, 1
             @renderer.getScene().add @cursor
 
         # matrix = new THREE.Matrix4
@@ -99,7 +99,7 @@ class Client
         point.x = (Math.floor(point.x / @gridCellWidth) * @gridCellWidth) + (@gridCellWidth / 2)
         point.y = (Math.floor(point.y / @gridCellHeight) * @gridCellHeight) + (@gridCellWidth / 2)
 
-        @cursor.position.set point.x, point.y, 0.1
+        @cursor.position.set point.x, point.y, 0.5
         @cursor.material.visible = true
         @cursor.material.needsUpdate
 
@@ -140,12 +140,14 @@ class Client
         if not @mouseDown or not position
             return
 
+        @hideCursor()
+
         @hasSelection = true
         @absolutePosition = _.clone position
 
         if not @selection
-            geometry = new THREE.PlaneGeometry 1, 1
-            material = new THREE.MeshBasicMaterial {
+            geometry = new THREE.BoxGeometry 1, 1, 1
+            material = new THREE.MeshLambertMaterial {
                 color: 0x333333
                 transparent: true
                 opacity: 0.4
@@ -175,7 +177,7 @@ class Client
         cx = width / 2 + start.x
         cy = height / 2 + start.y
 
-        @selection.scale.set width, height, 1
+        @selection.scale.set width, height, @gridCellHeight * 2
         @selection.position.set cx, cy, 0.1
 
         @selection.material.visible = true
