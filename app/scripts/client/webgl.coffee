@@ -108,14 +108,20 @@ class Client
             @cursor.material.visible = false
             @cursor.material.needsUpdate
 
-    handleMouseDown: (mousePosition, position) =>
+    handleMouseDown: (mousePosition, position, button) =>
+        if button isnt 0
+            return
+
         @mouseDown = true
         @hasSelection = false
 
         if position
             @absoluteStartPosition = _.clone position
 
-    handleMouseUp: (mousePosition, position) =>
+    handleMouseUp: (mousePosition, position, button) =>
+        if button isnt 0
+            return
+
         @mouseDown = false
 
         if @selection and @hasSelection

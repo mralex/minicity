@@ -47,13 +47,12 @@ class MouseHandler
         @trigger 'mouseout'
 
     handleMouseDown: (e) =>
-        if e.button is 0
-            @button = e.button
-            @trigger 'mousedown', @mouse, (if @intersection then @intersection.point else null), @button
+        @button = e.button
+        @trigger 'mousedown', @mouse, (if @intersection then @intersection.point else null), @button
 
     handleMouseUp: (e) =>
+        @trigger 'mouseup', @mouse, (if @intersection then @intersection.point else null), @button
         @button = null
-        @trigger 'mouseup', @mouse, (if @intersection then @intersection.point else null)
 
     update: (raycastObjects) ->
         if @mouseOver
