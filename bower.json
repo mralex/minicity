@@ -5,6 +5,8 @@
     "bootstrap": ">=3.1.1",
     "modernizr": "~2.8.2",
     "threejs-build": "*",
-    "noisejs": "*"
+    "noisejs": "*",
+    "backbone-events-standalone": "~0.2.4",
+    "underscore": "~1.7.0"
   }
 }
