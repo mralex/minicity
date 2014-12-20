@@ -68,7 +68,7 @@ class Client
     initializeCity: ->
         @world = new World @mapWidth / @gridCellWidth, @mapHeight / @gridCellHeight, @renderer.getScene()
 
-        @city = new City @mapWidth, @mapHeight
+        @city = new City @mapWidth / @gridCellWidth, @mapHeight / @gridCellHeight, { x: @gridCellWidth, y: @gridCellHeight}
         @terrainMap = new TerrainMap @city, @mapScale
         # @cityMap = new CityMap @city, @mapScale, @world, @
 
@@ -129,7 +129,8 @@ class Client
             @selection.material.needsUpdate
 
             if @action isnt 'pointer'
-                @world.addTiles @action, @selection.position.x, @selection.position.y, @selection.scale.x, @selection.scale.y
+                tiles = @world.addTiles @action, @selection.position.x, @selection.position.y, @selection.scale.x, @selection.scale.y
+                @city.addTiles tiles
 
     handleMouseMove: (mousePosition, position) =>
         if position

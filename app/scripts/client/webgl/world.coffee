@@ -75,6 +75,8 @@ class World
 			y - h / 2 + @tileSize.y / 2
 		)
 
+		tiles = []
+
 		for _y in [0...yCount]
 			for _x in [0...xCount]
 				position = new THREE.Vector2(
@@ -92,8 +94,10 @@ class World
 				tile.type = type
 
 				@add(tile, position, false)
+				tiles.push tile
 
 		@_commitChunks()
+		return tiles
 
 	update: (time) ->
 		for own key, chunk of @chunks

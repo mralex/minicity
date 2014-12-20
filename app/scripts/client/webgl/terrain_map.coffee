@@ -14,8 +14,8 @@ class TerrainMap
 
     constructor: (city, scale) ->
         @city = city
-        @width = city.width
-        @height = city.height
+        @width = city.getAbsoluteWidth()
+        @height = city.getAbsoluteHeight()
         @scale = scale
 
         @map = new THREE.Object3D

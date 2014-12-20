@@ -14,7 +14,7 @@ class Renderer
 		}
 
 		@renderer.setSize window.innerWidth, window.innerHeight
-		@renderer.setClearColor 0xffffff
+		@renderer.setClearColor 0x1D2951
 
 		@canvas = @renderer.domElement
 
