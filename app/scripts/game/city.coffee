@@ -3,6 +3,8 @@
 #
 
 MapGenerator = require './map.coffee'
+TileTypes = require './tiles/types.coffee'
+
 
 class City
 
@@ -31,7 +33,8 @@ class City
 		y += @height / 2
 		(y * @width) + x
 
-	setTile: (tile, x, y) ->
+	setTile: (type, x, y) ->
+		tile = new TileTypes[type](x, y)
 		@cityMap[@_posForXY(x, y)] = tile
 
 	getTile: (x, y) ->

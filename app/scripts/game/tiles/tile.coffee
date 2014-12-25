@@ -8,5 +8,13 @@ class Tile
 	height: 0
 	x: 0
 	y: 0
+	population: 0
+
+	constructor: (x, y) ->
+		@x = x
+		@y = y
+
+	update: ->
+
 
 module.exports = Tile
