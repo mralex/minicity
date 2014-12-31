@@ -135,6 +135,10 @@ module.exports = function(grunt) {
         src: ['<%= yeoman.app %>/less/app.less'],
         dest: '.tmp/styles/app.css'
       },
+      dist: {
+        src: ['<%= yeoman.app %>/less/app.less'],
+        dest: '<%= yeoman.dist %>/styles/app.css'
+      },
       bootstrap: {
         src: ['<%= yeoman.vendor %>/bootstrap/less/bootstrap.less'],
         dest: '<%= yeoman.dist %>/styles/bootstrap.css'
@@ -432,9 +436,6 @@ module.exports = function(grunt) {
     'concurrent:dist',
     'autoprefixer',
     'concat',
-    'cssmin',
-    'uglify',
-    'modernizr',
     'copy:dist',
     'rev',
     'usemin'
