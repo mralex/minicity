@@ -18,9 +18,10 @@ class City
 		@terrain = new MapGenerator(@width * tileSize.x, @height * tileSize.y)
 		@terrain.generate()
 
-		@cityMap = new Array @width * @height
-		@roads = new Array @width * @height
+		@cityMap = []
+		@roads = []
 		@regions = []
+		@typeGroups = {}
 
 	getAbsoluteWidth: ->
 		return @width * @tileSize.x
@@ -36,6 +37,11 @@ class City
 	setTile: (type, x, y) ->
 		tile = new TileTypes[type](x, y)
 		@cityMap[@_posForXY(x, y)] = tile
+		@addToGroup type, tile
+
+	addToGroup: (type, tile) ->
+		@typeGroups[type] = @typeGroups[type] || []
+		@typeGroups[type].push tile
 
 	getTile: (x, y) ->
 		@cityMap[@_posForXY(x, y)]
