@@ -12,10 +12,12 @@ class Tile
 		@generateGeometry()
 
 	getMapPosition: ->
-		return new THREE.Vector2(
-			Math.floor(@position.x / @tileSize.x),
-			Math.floor(@position.y / @tileSize.y)
-		)
+		unless @_mapPosition
+			@_mapPosition = new THREE.Vector2(
+				Math.floor(@position.x / @tileSize.x),
+				Math.floor(@position.y / @tileSize.y)
+			)
+		return @_mapPosition
 
 	update: ->
 
