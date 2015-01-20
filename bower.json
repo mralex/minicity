@@ -7,6 +7,8 @@
     "threejs-build": "r68",
     "noisejs": "*",
     "backbone-events-standalone": "~0.2.4",
-    "underscore": "~1.7.0"
+    "underscore": "~1.7.0",
+    "backbone.radio": "~0.8.4",
+    "backbone": "~1.1.2"
   }
 }
