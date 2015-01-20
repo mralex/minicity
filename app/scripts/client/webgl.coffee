@@ -95,7 +95,7 @@ class Client
 
         # point.applyMatrix4 matrix
 
-        # Snap to nearest grid 
+        # Snap to nearest grid
         point.x = (Math.floor(point.x / @gridCellWidth) * @gridCellWidth) + (@gridCellWidth / 2)
         point.y = (Math.floor(point.y / @gridCellHeight) * @gridCellHeight) + (@gridCellWidth / 2)
 
@@ -199,7 +199,7 @@ class Client
         else
             # @hideCursor()
 
-        
+
         # @controls.update()
         @renderer.render()
         @stats.end()

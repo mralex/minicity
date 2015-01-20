@@ -130,14 +130,16 @@ class City
 			position = tile.getMapPosition().add(@positionOffset)
 			currentTile = @getTile(position.x, position.y)
 
-			if currentTile isnt 'road'
+			unless currentTile and currentTile.type() is 'road' or currentTile and currentTile.type() is tile.type
+				console.log currentTile
 				# console.log tile.type, position.x + @width / 2, position.y + @height /2, position.x, position.y
 				parcel.tiles.push @setTile(tile.type, position.x, position.y)
 
-		parcel.type = parcel.tiles[0].type()
-		console.time 'parceling'
-		@addToParcels parcel
-		console.timeEnd 'parceling'
+		if parcel.tiles.length
+			parcel.type = parcel.tiles[0].type()
+			console.time 'parceling'
+			@addToParcels parcel
+			console.timeEnd 'parceling'
 
 	action: (action, x, y) ->
 		# Action is either 'build' or 'destroy'
