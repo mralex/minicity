@@ -54,10 +54,6 @@ class City
 		overlapping = []
 		last = _.last parcel.tiles
 
-		parcel.min = new THREE.Vector2(parcel.tiles[0].x, parcel.tiles[0].y)
-		parcel.max = new THREE.Vector2(last.x, last.y).addScalar(1)
-		parcel.size = parcel.max.clone().sub(parcel.min)
-
 		for _parcel in @parcels
 			continue if _parcel.type isnt parcel.type
 
@@ -117,6 +113,29 @@ class City
 			east.neighbors.west = tile
 			tile.neighbors.east = east
 
+	scoreRoadProximity: (parcel) ->
+		# Get edge tiles
+		edges = []
+		width = parcel.size.x
+		height = parcel.size.y
+		for y in [0...height]
+			if y is 0 or y is height - 1
+				# Get all tiles [0, y] to [width,y]
+				edges = edges.concat(parcel.tiles[y * width...y * width + width])
+			else
+				# Get tiles at [0, y] and [width, y]
+				edges.push parcel.tiles[y * width]
+				edges.push parcel.tiles[y * width + (width - 1)]
+
+		# Check if edge tiles are next to a road
+		roads = edges.map((edge) -> edge.isNextToRoad() if edge)
+
+		# Score tiles accordingly
+		for edge, i in edges
+			if roads[i]
+				# XXX Maybe multiply by the number of adjacent roads?
+				edge.roadScore = 5
+
 	getTile: (x, y) ->
 		@cityMap[@_posForXY(x, y)]
 
@@ -136,9 +155,19 @@ class City
 				parcel.tiles.push @setTile(tile.type, position.x, position.y)
 
 		if parcel.tiles.length
+			last = _.last parcel.tiles
+
 			parcel.type = parcel.tiles[0].type()
+			parcel.min = new THREE.Vector2(parcel.tiles[0].x, parcel.tiles[0].y)
+			parcel.max = new THREE.Vector2(last.x, last.y).addScalar(1)
+			parcel.size = parcel.max.clone().sub(parcel.min)
 			console.time 'parceling'
-			@addToParcels parcel
+			# @addToParcels parcel
+			if parcel.type is 'road'
+				console.log 'One day I\'ll score nearby zoned tiles'
+			else
+				@scoreRoadProximity parcel
+
 			console.timeEnd 'parceling'
 
 	action: (action, x, y) ->

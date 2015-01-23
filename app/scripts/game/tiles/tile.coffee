@@ -3,6 +3,7 @@
 #
 
 THREE = require 'three'
+_ = require 'underscore'
 
 class Tile
 	_type: ''
@@ -11,6 +12,7 @@ class Tile
 	x: 0
 	y: 0
 	population: 0
+	roadScore: -1
 
 	constructor: (x, y) ->
 		@position = new THREE.Vector2(x, y)
@@ -20,6 +22,12 @@ class Tile
 
 	type: ->
 		@_type
+
+	isNextToRoad: ->
+		if _.isEmpty @neighbors
+			return
+
+		(tile for direction, tile of @neighbors when tile.type() is 'road')
 
 	update: ->
 
